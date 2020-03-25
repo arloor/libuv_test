@@ -1,3 +1,6 @@
+## example 看example.c
+
+
 ## uv_buf_t uv_buf_init(char* base, unsigned int len) 谁来free这个buf
 
 答案： uv_buf_init只是传递buf，只需要在回调中进行free，并且如果buf是在栈中声明，则不需要free。

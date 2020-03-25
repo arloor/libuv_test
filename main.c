@@ -12,6 +12,9 @@ struct sockaddr_in addr;
 const char * ENTER="请输入任意文字：\n";
 
 typedef struct {
+    //uv_write_t放在第一位->内存布局中这个struct和uv_write_t起点相同->write_req_t和uv_write_t的指针可以互相强转
+    // 注意，单向安全，反响不安全，你懂得吧。。
+    // 互相强转下面有体现
     uv_write_t req;
     uv_buf_t buf;
 } write_req_t;

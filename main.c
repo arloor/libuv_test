@@ -3,6 +3,8 @@
 #include <string.h>
 #include <uv.h>
 #include "unp_prac.h"
+#include "struct.h"
+#include "callback/close_callback.h"
 
 #define DEFAULT_PORT 7000
 #define DEFAULT_BACKLOG 128
@@ -47,10 +49,12 @@ void on_first_write(uv_write_t *req, int status){
     }
 }
 
+
+
 void echo_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buf) {
 
     if (nread > 0) {
-        //截取char*，增加\0【可以在这里增加\0,因为该buf会重复利用，但是没有确定会不会在最后一位越界】
+        //截取char*，增加\0【明显不合理】
         //buf->base[nread]=0;
         //fprintf(stderr,"%ld:%s",nread,buf->base);
         // 改为使用如下方法
@@ -68,9 +72,8 @@ void echo_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buf) {
     if (nread < 0) {
         if (nread != UV_EOF)
             fprintf(stderr, "Read error %s\n", uv_err_name(nread));
-        uv_close((uv_handle_t*) client, NULL);
+        uv_close((uv_handle_t*) client, free_client);
     }
-
     free(buf->base);
 }
 
@@ -88,7 +91,7 @@ void on_new_connection(uv_stream_t *server, int status) {
         write_req_t req;
         req.buf = uv_buf_init((char *)ENTER, strlen(ENTER));
         uv_write((uv_write_t*) &req,(uv_stream_t*)  client, &req.buf, 1, on_first_write);
-
+        client->data=calloc(1, sizeof(Context));
         uv_read_start((uv_stream_t*) client, alloc_buffer, echo_read);
     }
     else {

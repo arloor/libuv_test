@@ -52,6 +52,7 @@ void on_first_write(uv_write_t *req, int status){
 
 
 void echo_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buf) {
+    Context *context=(Context*)client->data;
 
     if (nread > 0) {
         //截取char*，增加\0【明显不合理】
@@ -91,7 +92,7 @@ void on_new_connection(uv_stream_t *server, int status) {
         write_req_t req;
         req.buf = uv_buf_init((char *)ENTER, strlen(ENTER));
         uv_write((uv_write_t*) &req,(uv_stream_t*)  client, &req.buf, 1, on_first_write);
-        client->data=calloc(1, sizeof(Context));
+        client->data=(Context*)calloc(1, sizeof(Context));//calloc,全部初始化为0，context的status为0
         uv_read_start((uv_stream_t*) client, alloc_buffer, echo_read);
     }
     else {

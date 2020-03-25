@@ -5,7 +5,7 @@
 #ifndef LIBUV_TEST_STRUCT_H
 #define LIBUV_TEST_STRUCT_H
 typedef enum {
-    a,b,c,d
+    init,end
 }SOCKS5_STATUS;
 
 // 保存socks5握手状态

@@ -12,3 +12,5 @@
    If the function you pass the uv_buf_t to is used in an asynchronous way the memory that uv_buf_t.base points to must not be freed until the callback is called.
    
    Even cancelling in progress requests like uv_write_t (by calling close on the handle) does not prevent the callbacks from getting called, so it's safe to do the cleanup there.
+   
+ ## uv_tcp_t在nread=0时，需要uv_close，然后在回调中free

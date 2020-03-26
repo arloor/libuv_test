@@ -29,6 +29,10 @@ void free_malloc_write_req(uv_write_t *req) {
     //free(wr);
 }
 
+void on_close(uv_handle_t* handle) {
+    free(handle);
+}
+
 void alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buf) {
     buf->base = (char*) malloc(suggested_size);
     buf->len = suggested_size;
@@ -96,7 +100,7 @@ void on_new_connection(uv_stream_t *server, int status) {
         uv_read_start((uv_stream_t*) client, alloc_buffer, echo_read);
     }
     else {
-        uv_close((uv_handle_t*) client, NULL);
+        uv_close((uv_handle_t*) client, on_close);
     }
 }
 
